@@ -1,0 +1,31 @@
+---
+- name: "Setting up docker container on client server using ansible"
+  become: true
+  hosts: all
+  vars:
+    packages:
+      - docker
+      - pip
+  tasks:
+
+    - name: "installing docker and pip"
+      yum:
+        name: "{{packages}}"
+        state: present
+
+    - name: "installing dependencies"
+      pip:
+        name: docker-py
+        state: present
+
+    - name: "restarting & enabling docker service"
+      service:
+        name: docker
+        state: restarted
+        enabled: true
+
+    - name: "Creating httpd container"
+      docker_container:
+        name: apache
+        image: hemanthsaju7/ansible_docker_container:latest
+        ports: "80:80"
